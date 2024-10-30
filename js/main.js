@@ -1,21 +1,30 @@
-document.getElementById('submit').addEventListener('click', async () => {
-    const keyword = document.getElementById('search').value;
-    const apiKey = 'YOUR_API_KEY'; // Replace 'YOUR_API_KEY' with your actual Giphy API key
-    const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${keyword}&limit=10`;
-    
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        const gifContainer = document.getElementById('gif-container');
-        gifContainer.innerHTML = ''; // Clear previous images
+const apiKey = 's5TRNMS1cLfxKFzbEeMiSicwrLGozXKw'; // Replace with your actual API key
 
-        data.data.forEach(gif => {
-            const img = document.createElement('img');
-            img.src = gif.images.fixed_height.url;
-            gifContainer.appendChild(img);
-        });
-    } catch (error) {
-        console.error('Error fetching data:', error);
-        alert('Failed to load GIFs. Please try again.');
-    }
+// Function to fetch GIFs based on user search
+function fetchGifs(query) {
+    const url = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${query}&limit=20&rating=g`;
+
+    fetch(url)
+        .then(response => response.json())
+        .then(data => displayGifs(data.data))
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+// Function to display GIFs on the page
+function displayGifs(gifs) {
+    const gifContainer = document.getElementById('gifContainer');
+    gifContainer.innerHTML = ''; // Clear any existing GIFs
+
+    gifs.forEach(gif => {
+        const img = document.createElement('img');
+        img.src = gif.images.fixed_height.url;
+        gifContainer.appendChild(img);
+    });
+}
+
+// Set up event listener for the search form
+document.getElementById('searchForm').addEventListener('submit', function (event) {
+    event.preventDefault(); // Prevent the form from submitting traditionally
+    const query = document.getElementById('searchInput').value;
+    fetchGifs(query); // Call the function to fetch GIFs based on the query
 });
